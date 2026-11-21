@@ -1,0 +1,12 @@
+# Suggest approving and merging green pull requests of dependency bots.
+# With auto = false (the default) this only shows up on the Planned tab; you review and apply it.
+# To let Prism do it on its own, set auto = true: it then runs on every refresh, but only for
+# patch and minor updates with strictly green CI, never on drafts, and only on pull requests
+# that involve you (see scope-only-safety.toml).
+
+[[rule]]
+name = "approve green bot PRs"
+authors = ["dependabot[bot]", "renovate[bot]"]
+checks = "green"
+actions = ["approve"]
+auto = false

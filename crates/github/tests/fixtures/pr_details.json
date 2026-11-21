@@ -1,0 +1,90 @@
+{
+  "data": {
+    "p0": {
+      "pullRequest": {
+        "id": "PR_kwDO1", "state": "OPEN", "isDraft": false,
+        "title": "Bump serde from 1.0.1 to 1.0.2",
+        "url": "https://github.com/acme/widget/pull/1",
+        "author": {"login": "renovate", "__typename": "Bot"},
+        "headRefOid": "aaaa1111",
+        "mergeStateStatus": "CLEAN",
+        "reviewDecision": null,
+        "labels": {"nodes": [{"name": "dependencies"}]},
+        "changedFiles": 2,
+        "createdAt": "2026-11-01T10:00:00Z",
+        "updatedAt": "2026-11-02T10:00:00Z",
+        "commits": {"nodes": [{"commit": {"statusCheckRollup": {"contexts": {"nodes": [
+          {"name": "build", "status": "COMPLETED", "conclusion": "SUCCESS", "detailsUrl": "https://github.com/acme/widget/actions/runs/444/job/1", "checkSuite": {"workflowRun": {"databaseId": 444}}},
+          {"name": "lint", "status": "COMPLETED", "conclusion": "FAILURE", "detailsUrl": "https://github.com/acme/widget/actions/runs/555/job/2", "checkSuite": {"workflowRun": {"databaseId": 555}}},
+          {"name": "deploy", "status": "IN_PROGRESS", "conclusion": null, "detailsUrl": null, "checkSuite": {"workflowRun": null}},
+          {"context": "ci/legacy", "state": "ERROR", "targetUrl": "https://ci.example.com/1"},
+          {"context": "ci/other", "state": "PENDING", "targetUrl": null}
+        ]}}}}]}
+      },
+      "mergeCommitAllowed": true, "squashMergeAllowed": true, "rebaseMergeAllowed": false,
+      "viewerDefaultMergeMethod": "SQUASH",
+      "autoMergeAllowed": true, "isArchived": false, "viewerPermission": "WRITE"
+    },
+    "p1": {
+      "pullRequest": {
+        "state": "OPEN", "isDraft": true,
+        "title": "Add feature",
+        "url": "https://github.com/acme/widget/pull/2",
+        "author": {"login": "alice", "__typename": "User"},
+        "headRefOid": "bbbb2222",
+        "mergeStateStatus": "DRAFT",
+        "reviewDecision": "REVIEW_REQUIRED",
+        "labels": {"nodes": []},
+        "changedFiles": 10,
+        "createdAt": "2026-11-03T10:00:00Z",
+        "updatedAt": "2026-11-04T10:00:00Z",
+        "commits": {"nodes": [{"commit": {"statusCheckRollup": null}}]},
+        "viewerCanUpdateBranch": false, "viewerCanClose": false, "viewerCanEnableAutoMerge": false
+      },
+      "mergeCommitAllowed": false, "squashMergeAllowed": false, "rebaseMergeAllowed": true,
+      "viewerDefaultMergeMethod": "MERGE",
+      "autoMergeAllowed": false, "isArchived": false, "viewerPermission": "READ"
+    },
+    "p2": {
+      "pullRequest": {
+        "state": "OPEN", "isDraft": false,
+        "title": "Update dependency tokio to v1.5.0",
+        "body": "| Package | Change |\n|---|---|\n| [tokio](https://example.com/tokio) | [`1.4.2` → `1.5.0`](https://example.com/c) |",
+        "url": "https://github.com/acme/widget/pull/3",
+        "author": {"login": "dependabot[bot]", "__typename": "User"},
+        "headRefOid": "cccc3333",
+        "mergeStateStatus": "BLOCKED",
+        "reviewDecision": "APPROVED",
+        "labels": {"nodes": []},
+        "changedFiles": 1,
+        "createdAt": "2026-11-05T10:00:00Z",
+        "updatedAt": "2026-11-06T10:00:00Z",
+        "commits": {"nodes": []},
+        "autoMergeRequest": {"enabledAt": "2026-11-06T11:00:00Z"},
+        "viewerCanUpdateBranch": true, "viewerCanClose": true, "viewerCanEnableAutoMerge": false
+      },
+      "mergeCommitAllowed": true, "squashMergeAllowed": false, "rebaseMergeAllowed": false,
+      "viewerDefaultMergeMethod": "MERGE"
+    },
+    "p3": {
+      "pullRequest": {
+        "state": "CLOSED", "isDraft": false,
+        "title": "Old change",
+        "url": "https://github.com/acme/widget/pull/4",
+        "author": {"login": "bob", "__typename": "User"},
+        "headRefOid": "dddd4444",
+        "mergeStateStatus": "UNKNOWN",
+        "reviewDecision": null,
+        "labels": {"nodes": []},
+        "changedFiles": 1,
+        "createdAt": "2026-10-01T10:00:00Z",
+        "updatedAt": "2026-10-02T10:00:00Z",
+        "commits": {"nodes": []}
+      },
+      "mergeCommitAllowed": true, "squashMergeAllowed": true, "rebaseMergeAllowed": true,
+      "viewerDefaultMergeMethod": "MERGE"
+    },
+    "p4": null
+  },
+  "errors": [{"type": "NOT_FOUND", "path": ["p4"], "message": "Could not resolve to a Repository with the name 'acme/widget'."}]
+}

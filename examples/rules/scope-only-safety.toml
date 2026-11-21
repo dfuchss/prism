@@ -1,0 +1,22 @@
+# Pull requests can be in the inbox only because of the [scope] in settings.toml (shown as
+# "via repo"). Auto rules ignore those unless the rule says involved = false.
+
+# Only pull requests that involve you: a notification, a review request from you, or your own.
+# This is the default for auto rules; spelling it out documents the intent.
+[[rule]]
+name = "approve my own repos' bot PRs"
+authors = ["dependabot[bot]"]
+involved = true
+checks = "green"
+actions = ["approve"]
+auto = true
+
+# Only pull requests that are in the inbox through the scope; this rule may act on them
+# even when it is auto, so use it with care.
+[[rule]]
+name = "suggest approving scope PRs"
+authors = ["renovate[bot]"]
+involved = false
+checks = "green"
+actions = ["approve"]
+auto = false

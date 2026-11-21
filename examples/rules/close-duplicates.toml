@@ -1,0 +1,10 @@
+# Close superseded duplicates: several pull requests bumping the same dependency in the same
+# repository; Prism keeps the one with the highest target version.
+# checks = "any" because CI of the old pull request does not matter.
+
+[[rule]]
+name = "close superseded bumps"
+duplicate = true
+checks = "any"
+actions = ["comment:\"Superseded by a newer update.\"", "close", "mark-done"]
+auto = false

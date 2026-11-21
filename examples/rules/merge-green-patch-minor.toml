@@ -1,0 +1,17 @@
+# Approve and merge patch and minor bumps of dependency bots once CI is green.
+#
+# Safety rules for auto = true (they apply to every auto rule with a merging action):
+#   - only patch and minor updates; major and unknown updates are never merged automatically
+#   - only when all checks are green (no checks at all is not enough)
+#   - never on drafts
+#   - Prism fetches the pull request again right before acting and skips it if the head moved
+#   - only on pull requests that involve you, unless the rule says involved = false
+# Set auto = false to get suggestions on the Planned tab instead.
+
+[[rule]]
+name = "merge green patch/minor bot PRs"
+authors = ["dependabot[bot]", "renovate[bot]"]
+update = ["patch", "minor"]
+checks = "green"
+actions = ["approve-and-merge"]
+auto = true

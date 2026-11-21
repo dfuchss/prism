@@ -1,0 +1,41 @@
+[
+  {
+    "id": "1001",
+    "unread": true,
+    "reason": "review_requested",
+    "updated_at": "2026-11-20T09:00:00Z",
+    "last_read_at": null,
+    "subject": {
+      "title": "Bump serde from 1.0.1 to 1.0.2",
+      "url": "https://api.github.com/repos/acme/widget/pulls/12",
+      "latest_comment_url": "https://api.github.com/repos/acme/widget/issues/comments/1",
+      "type": "PullRequest"
+    },
+    "repository": { "full_name": "acme/widget" },
+    "url": "https://api.github.com/notifications/threads/1001"
+  },
+  {
+    "id": "1002",
+    "unread": false,
+    "reason": "subscribed",
+    "updated_at": "2026-11-19T09:00:00Z",
+    "subject": {
+      "title": "Release 1.0",
+      "url": "https://api.github.com/repos/acme/widget/releases/5",
+      "type": "Release"
+    },
+    "repository": { "full_name": "acme/widget" }
+  },
+  {
+    "id": "1003",
+    "unread": false,
+    "reason": "mention",
+    "updated_at": "2026-11-18T09:00:00Z",
+    "subject": {
+      "title": "Fix typo",
+      "url": "https://api.github.com/repos/acme/gadget/pulls/3",
+      "type": "PullRequest"
+    },
+    "repository": { "full_name": "acme/gadget" }
+  }
+]
