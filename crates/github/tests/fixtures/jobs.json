@@ -1,0 +1,5 @@
+{"total_count":3,"jobs":[
+ {"id":1,"name":"build","conclusion":"success","html_url":"https://github.com/acme/widget/actions/runs/555/job/1"},
+ {"id":2,"name":"lint","conclusion":"failure","html_url":"https://github.com/acme/widget/actions/runs/555/job/2"},
+ {"id":3,"name":"deploy","conclusion":null,"html_url":"https://github.com/acme/widget/actions/runs/555/job/3"}
+]}

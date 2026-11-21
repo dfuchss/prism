@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+<defs>
+<linearGradient id="gb" gradientUnits="userSpaceOnUse" x1="40" y1="640" x2="211.6" y2="592.7"><stop offset="0" stop-color="#7C88A8"/><stop offset="1" stop-color="#F0F3FF"/></linearGradient>
+<linearGradient id="r0" gradientUnits="userSpaceOnUse" x1="659" y1="468" x2="857" y2="375.7"><stop offset="0" stop-color="#9CC8FF"/><stop offset="0.35" stop-color="#0A6CFF"/><stop offset="1" stop-color="#0A6CFF"/></linearGradient>
+<linearGradient id="r1" gradientUnits="userSpaceOnUse" x1="703.3" y1="560" x2="921.7" y2="560"><stop offset="0" stop-color="#FFE070"/><stop offset="0.35" stop-color="#FF8A00"/><stop offset="1" stop-color="#FF8A00"/></linearGradient>
+<linearGradient id="r2" gradientUnits="userSpaceOnUse" x1="747.6" y1="652" x2="945.5" y2="744.3"><stop offset="0" stop-color="#8DF5A6"/><stop offset="0.35" stop-color="#00B83C"/><stop offset="1" stop-color="#00B83C"/></linearGradient>
+<linearGradient id="gp" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#8A6BFF"/><stop offset="1" stop-color="#5B21D6"/></linearGradient>
+<linearGradient id="rim" gradientUnits="userSpaceOnUse" x1="512" y1="150" x2="512" y2="790"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".95"/><stop offset="1" stop-color="#B8B4FF" stop-opacity=".45"/></linearGradient>
+<clipPath id="cp"><path d="M512 150 L820 790 L204 790 Z"/></clipPath>
+</defs>
+<path d="M40 640 L211.6 592.7" stroke="url(#gb)" stroke-width="100" fill="none"/>
+<path d="M659 468 L857 375.7" stroke="url(#r0)" stroke-width="92" fill="none"/><path d="M703.3 560 L921.7 560" stroke="url(#r1)" stroke-width="92" fill="none"/><path d="M747.6 652 L945.5 744.3" stroke="url(#r2)" stroke-width="92" fill="none"/>
+<path d="M512 150 L820 790 L204 790 Z" fill="url(#gp)" stroke="url(#rim)" stroke-width="40" stroke-linejoin="round"/>
+<path d="M290.6 570.9 L220 660.9 L183.8 529.8 Z" fill="#F0F3FF" stroke="#F0F3FF" stroke-width="6" stroke-linejoin="round"/>
+<path d="M930.9 341.2 L872.7 443.4 L815.2 320.2 Z" fill="#0A6CFF" stroke="#0A6CFF" stroke-width="6" stroke-linejoin="round"/>
+<path d="M1003.3 560 L907.3 628 L907.3 492 Z" fill="#FF8A00" stroke="#FF8A00" stroke-width="6" stroke-linejoin="round"/>
+<path d="M1019.5 778.8 L903.7 799.8 L961.2 676.6 Z" fill="#00B83C" stroke="#00B83C" stroke-width="6" stroke-linejoin="round"/>
+</svg>

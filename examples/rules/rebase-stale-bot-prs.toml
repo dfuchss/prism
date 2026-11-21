@@ -1,0 +1,12 @@
+# Ask the bot to rebase pull requests that are behind their base branch or have conflicts.
+# Dependabot gets "@dependabot rebase", Renovate its rebase checkbox ticked.
+# A conflicting pull request usually has failing CI, so checks must be "any"
+# (the default "green" would skip it). The action runs at most once per head commit.
+
+[[rule]]
+name = "rebase stale bot PRs"
+authors = ["dependabot[bot]", "renovate[bot]"]
+state = ["behind", "dirty"]
+checks = "any"
+actions = ["rebase"]
+auto = true

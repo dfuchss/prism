@@ -1,0 +1,25 @@
+[package]
+name = "prism-github"
+edition.workspace = true
+rust-version.workspace = true
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description.workspace = true
+
+[dependencies]
+protocol.workspace = true
+reqwest.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+# spawn_blocking for `gh auth token`, try_join! for independent requests.
+tokio.workspace = true
+
+[dev-dependencies]
+protocol = { workspace = true, features = ["test-support"] }
+wiremock.workspace = true
+prism-rules.workspace = true
+
+[lints]
+workspace = true

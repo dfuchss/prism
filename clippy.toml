@@ -1,0 +1,7 @@
+# Thresholds of the clean-code lints enabled in Cargo.toml ([workspace.lints]).
+too-many-lines-threshold = 60
+cognitive-complexity-threshold = 15
+too-many-arguments-threshold = 5
+# Tests may unwrap and print; production code may not (`unwrap_used`, `print_*`).
+allow-unwrap-in-tests = true
+allow-print-in-tests = true

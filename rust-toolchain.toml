@@ -1,0 +1,8 @@
+# The exact toolchain for local builds and CI (rustup reads this file). Bump it deliberately, together with
+# any new lint fixes; it must stay >= `rust-version` in Cargo.toml.
+# Release jobs add their target triple on top with `rustup target add`.
+[toolchain]
+channel = "1.100.0"
+profile = "minimal"
+components = ["clippy", "rustfmt"]
+targets = ["wasm32-unknown-unknown"]

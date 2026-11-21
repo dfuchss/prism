@@ -1,0 +1,185 @@
+name: release
+
+# Builds unsigned macOS bundles for Apple silicon and Intel, Linux AppImages and plain binaries for x86_64 and
+# aarch64 and a Windows x86_64 executable on a version tag and publishes them as a GitHub Release with a SHA256SUMS
+# file.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  version:
+    name: Check version and run the checks
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+        with:
+          linux-packages: 'true'
+      # The version lives only in the workspace Cargo.toml; tauri.conf.json inherits it.
+      - name: Tag matches the Cargo version
+        run: |
+          version="$(.github/scripts/version.sh)"
+          if [ "v${version}" != "${GITHUB_REF_NAME}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match the Cargo version ${version}"
+            exit 1
+          fi
+          if jq -e 'has("version")' app/src-tauri/tauri.conf.json > /dev/null; then
+            echo "::error::tauri.conf.json must not set its own version"
+            exit 1
+          fi
+      - name: Run checks
+        run: scripts/check.sh
+
+  build-macos:
+    name: Build macOS ${{ matrix.arch }}
+    needs: version
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+            arch: arm64
+          - target: x86_64-apple-darwin
+            arch: x86_64
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+        with:
+          cache-key: ${{ matrix.target }}
+          targets: ${{ matrix.target }}
+          tauri-cli: 'true'
+      - name: Build the app bundle
+        working-directory: app/src-tauri
+        run: cargo tauri build --target ${{ matrix.target }} --bundles app
+      - name: Check and zip the bundle
+        run: |
+          app="target/${{ matrix.target }}/release/bundle/macos/PRism.app"
+          plist="$app/Contents/Info.plist"
+          bundle_version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$plist")"
+          bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$plist")"
+          if [ "v${bundle_version}" != "${GITHUB_REF_NAME}" ] || [ "${bundle_id}" != "org.fuchss.prism" ]; then
+            echo "::error::Bundle ${bundle_id} ${bundle_version} does not match ${GITHUB_REF_NAME}"
+            exit 1
+          fi
+          mkdir dist
+          # ditto keeps the bundle structure, modes and symbolic links.
+          ditto -c -k --keepParent "$app" "dist/prism-macos-${{ matrix.arch }}.zip"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: prism-macos-${{ matrix.arch }}
+          path: dist/prism-macos-${{ matrix.arch }}.zip
+          if-no-files-found: error
+
+  build-linux:
+    name: Build Linux ${{ matrix.arch }}
+    needs: version
+    # The AppImage bundles the runner's WebKitGTK and GTK, the plain binary links the system's; both need at
+    # least the runner's glibc. Both runners are pinned to the oldest Ubuntu release supported (24.04), so that
+    # ubuntu-latest moving to a newer release does not raise the glibc floor.
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+        with:
+          cache-key: ${{ matrix.arch }}-unknown-linux-gnu
+          tauri-cli: 'true'
+          linux-packages: 'true'
+      - name: Install AppImage tools
+        # Run by linuxdeploy while building the AppImage.
+        run: sudo apt-get install -y --no-install-recommends patchelf file
+      - name: Build the AppImage
+        working-directory: app/src-tauri
+        run: cargo tauri build --bundles appimage
+      - name: Check and rename the AppImage and the binary
+        run: |
+          version="$(.github/scripts/version.sh)"
+          built_images=(target/release/bundle/appimage/prism_"${version}"_*.AppImage)
+          scripts/check-appimage.sh "${built_images[@]}"
+          mkdir dist
+          # The plain binary of the same build; it uses the system's WebKitGTK and GTK.
+          install -m 755 target/release/prism "dist/prism-linux-${{ matrix.arch }}"
+          mv "${built_images[0]}" "dist/prism-linux-${{ matrix.arch }}.AppImage"
+          chmod 755 "dist/prism-linux-${{ matrix.arch }}.AppImage"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: prism-linux-${{ matrix.arch }}
+          path: |
+            dist/prism-linux-${{ matrix.arch }}
+            dist/prism-linux-${{ matrix.arch }}.AppImage
+          if-no-files-found: error
+
+  build-windows:
+    name: Build Windows x86_64
+    needs: version
+    runs-on: windows-latest
+    defaults:
+      run:
+        # Git Bash, like the scripts expect.
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+        with:
+          cache-key: x86_64-pc-windows-msvc
+          targets: x86_64-pc-windows-msvc
+          tauri-cli: 'true'
+      # Only the executable: PRism ships on Windows as one portable file.
+      - name: Build the executable
+        working-directory: app/src-tauri
+        run: cargo tauri build --no-bundle
+      - name: Check and rename the executable
+        run: |
+          exe=target/release/prism.exe
+          product_version="$(powershell.exe -NoProfile -Command "(Get-Item '${exe}').VersionInfo.ProductVersion" | tr -d '\r')"
+          if [ "v${product_version}" != "${GITHUB_REF_NAME}" ]; then
+            echo "::error::Executable version ${product_version} does not match ${GITHUB_REF_NAME}"
+            exit 1
+          fi
+          mkdir dist
+          mv "${exe}" dist/prism-windows-x86_64.exe
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: prism-windows-x86_64
+          path: dist/prism-windows-x86_64.exe
+          if-no-files-found: error
+
+  release:
+    name: Publish release
+    needs: [build-macos, build-linux, build-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Write checksums
+        working-directory: dist
+        run: |
+          sha256sum prism-macos-*.zip prism-linux-x86_64 prism-linux-aarch64 prism-linux-*.AppImage prism-windows-*.exe > SHA256SUMS
+          cat SHA256SUMS
+      - name: Build release notes
+        run: .github/scripts/release-notes.sh "${GITHUB_REF_NAME}" > release-notes.md
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/prism-macos-*.zip dist/prism-linux-x86_64 dist/prism-linux-aarch64 dist/prism-linux-*.AppImage dist/prism-windows-*.exe dist/SHA256SUMS \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "PRism ${GITHUB_REF_NAME#v}" \
+            --notes-file release-notes.md \
+            --verify-tag \
+            --latest

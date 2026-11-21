@@ -1,0 +1,10 @@
+# Merged pull requests need no attention: mark their notification as read.
+# Runs once per unread notification. Merged and closed pull requests are only seen while they
+# still have a notification, and only mark-read, mark-done and unsubscribe ever run on them.
+
+[[rule]]
+name = "mark merged as read"
+pr_state = ["merged"]
+checks = "any"
+actions = ["mark-read"]
+auto = true

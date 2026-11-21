@@ -1,0 +1,36 @@
+name: docs
+
+# Mirrors docs/ into the repository's GitHub wiki: Home.md is the start page, _Sidebar.md the
+# navigation. The wiki's own content is replaced on every run, so edit the pages in docs/.
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**', '.github/workflows/docs.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  wiki:
+    name: Publish wiki
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # The wiki is a repository of its own; GITHUB_TOKEN cannot push to it.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki
+          token: ${{ secrets.PAT_TOKEN }}
+      - name: Replace the wiki pages
+        run: |
+          find wiki -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -r docs/. wiki/
+          # Links to the repository use the placeholder <<REPO>>.
+          find wiki -name '*.md' -not -path 'wiki/.git/*' -exec sed -i "s|<<REPO>>|${GITHUB_REPOSITORY}|g" {} +
+      - name: Push the wiki
+        uses: stefanzweifel/git-auto-commit-action@d0b01107b5db882071f96de5dd4b54961ea93f4c # v7.2.1
+        with:
+          repository: wiki
+          commit_message: Update the wiki from ${{ github.sha }}

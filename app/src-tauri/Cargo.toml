@@ -1,0 +1,33 @@
+[package]
+name = "prism"
+edition.workspace = true
+rust-version.workspace = true
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description.workspace = true
+
+[lib]
+name = "prism_lib"
+
+[dependencies]
+protocol.workspace = true
+prism-github.workspace = true
+prism-rules.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tauri.workspace = true
+tokio = { workspace = true, features = ["time"] }
+tauri-plugin-opener.workspace = true
+toml.workspace = true
+
+[dev-dependencies]
+protocol = { workspace = true, features = ["test-support"] }
+tempfile = "3"
+
+[build-dependencies]
+tauri-build.workspace = true
+
+[lints]
+workspace = true

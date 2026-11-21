@@ -1,0 +1,9 @@
+[build]
+dist = "dist"
+public_url = "/"
+
+[serve]
+port = 1420
+
+[watch]
+ignore = ["../src-tauri"]

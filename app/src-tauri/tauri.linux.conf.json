@@ -1,0 +1,6 @@
+{
+  "productName": "prism",
+  "bundle": {
+    "targets": ["appimage"]
+  }
+}

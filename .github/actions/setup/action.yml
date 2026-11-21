@@ -1,0 +1,49 @@
+name: Set up PRism
+description: Rust toolchain (from rust-toolchain.toml), build cache, Trunk and optionally the Tauri CLI. The caller checks out first.
+inputs:
+  cache-key:
+    description: Extra key for the Rust cache (for example the target triple).
+    default: ''
+  targets:
+    description: Extra space separated Rust targets to add (cross targets of release jobs).
+    default: ''
+  tauri-cli:
+    description: Install the Tauri CLI ("true" or "false").
+    default: 'false'
+  linux-packages:
+    description: Install the system packages Tauri needs on Linux ("true" or "false").
+    default: 'false'
+runs:
+  using: composite
+  steps:
+    - name: Install system packages
+      if: inputs.linux-packages == 'true'
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev libgtk-3-dev libsoup-3.0-dev libayatana-appindicator3-dev librsvg2-dev libxdo-dev
+    - name: Install Rust
+      shell: bash
+      env:
+        EXTRA_TARGETS: ${{ inputs.targets }}
+      run: |
+        # rustup reads rust-toolchain.toml (version, components, wasm target).
+        rustup show active-toolchain || rustup toolchain install
+        if [ -n "${EXTRA_TARGETS}" ]; then
+          # shellcheck disable=SC2086
+          rustup target add ${EXTRA_TARGETS}
+        fi
+        rustc --version
+    - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      with:
+        key: ${{ inputs.cache-key }}
+    - name: Install Trunk
+      shell: bash
+      # Relative to the checkout (the default working directory); github.action_path has
+      # backslashes on Windows that bash would eat.
+      run: bash .github/scripts/install-trunk.sh
+    - name: Install the Tauri CLI
+      if: inputs.tauri-cli == 'true'
+      uses: taiki-e/install-action@25f51f6b1bf4e18876107cece836f4f77ac17c8c # v2.90.7
+      with:
+        tool: tauri-cli@2.12.4

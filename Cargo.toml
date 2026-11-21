@@ -1,0 +1,78 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/protocol",
+    "crates/github",
+    "crates/rules",
+    "app/src-tauri",
+    "app/ui",
+]
+# app/ui is a wasm crate built by Trunk; keep it out of plain `cargo build/test`.
+default-members = [
+    "crates/protocol",
+    "crates/github",
+    "crates/rules",
+    "app/src-tauri",
+]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.98"
+version = "0.1.0"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/dfuchss/prism"
+authors = ["Dominik Fuchß"]
+description = "A desktop inbox for GitHub pull requests, built with Rust and Tauri"
+
+[workspace.dependencies]
+protocol = { path = "crates/protocol" }
+prism-github = { path = "crates/github" }
+prism-rules = { path = "crates/rules" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "1"
+regex = "1"
+reqwest = { version = "0.13", default-features = false, features = ["rustls", "json"] }
+thiserror = "2"
+tokio = { version = "1", features = ["rt", "macros", "sync"] }
+wiremock = "0.6"
+tauri = "=2.12.5"
+tauri-build = "2.7"
+tauri-plugin-opener = "2.7.3"
+
+# Smaller release binaries; panic stays unwind.
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+
+# Stripping the wasm UI removes its target_features section, which wasm-opt then needs.
+[profile.release.package.prism-ui]
+strip = false
+
+# Clean-code rules for every crate (each opts in with `lints.workspace = true`); thresholds
+# live in clippy.toml. Run everything with scripts/check.sh.
+[workspace.lints.rust]
+unsafe_code = "forbid"
+unused = { level = "deny", priority = -1 }
+dead_code = "deny"
+unreachable_pub = "warn"
+
+[workspace.lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+cognitive_complexity = "warn"
+dbg_macro = "deny"
+todo = "deny"
+unimplemented = "deny"
+print_stdout = "deny"
+print_stderr = "deny"
+unwrap_used = "deny"
+# Allowed pedantic lints, with the reason:
+# - application crates, not a published API: no `# Errors`/`# Panics` sections, no `#[must_use]` everywhere
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+must_use_candidate = "allow"
+# - state types mirror independent GitHub flags
+struct_excessive_bools = "allow"
+# - `assert!(x.is_empty())` reads better than comparing against a typed empty array
+assert_is_empty = "allow"

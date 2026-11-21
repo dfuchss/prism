@@ -1,0 +1,5 @@
+{"data":{"search":{"pageInfo":{"hasNextPage":true,"endCursor":"CURSOR1"},"nodes":[
+ {"number":12,"repository":{"nameWithOwner":"acme/widget"}},
+ {"number":3,"repository":{"nameWithOwner":"acme/gadget"}},
+ {}
+]}}}

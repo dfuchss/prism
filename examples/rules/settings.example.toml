@@ -1,0 +1,13 @@
+# Example settings.toml (Settings tab). Not a rules file.
+
+[scope]
+# Open PRs of every repo you can access that matches one of these globs are added to the inbox.
+# Globs are over owner/name, case-insensitive: "owner/*", "*/widget", "owner/repo".
+include = ["example-org/*"]
+# Optional. Repos matching these globs are hidden from the whole inbox: notifications, review
+# requests and your own PRs too (rules never see them). Wins over include.
+exclude = ["example-org/archive-*"]
+
+[gh]
+# Path of the gh executable; empty = "gh" from PATH. GH_TOKEN and GITHUB_TOKEN take precedence.
+path = "/opt/homebrew/bin/gh"
