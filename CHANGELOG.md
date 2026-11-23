@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-23
+
+### Added
+
+- Rule key `allow_unknown`: lets `auto` rules merge updates that are no recognized version bump.
+
 ## [0.1.0] - 2026-11-21
 
 First release.
@@ -65,5 +71,6 @@ First release.
 - About tab (and "About PRism" in the macOS menu) with version, platform, config directory, GitHub sign-in status, links and the GPL notice
 - Logo, light and dark theme
 
-[Unreleased]: https://github.com/dfuchss/prism/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/dfuchss/prism/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/dfuchss/prism/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/dfuchss/prism/releases/tag/v0.1.0
