@@ -283,6 +283,37 @@ fn auto_safety() {
     assert!(auto_allowed(&r, &no_bump, &Action::MarkDone));
 }
 
+#[test]
+fn auto_allow_unknown_is_opt_in_and_still_needs_green_ci() {
+    let merging = [
+        Action::Merge(None),
+        Action::ApproveAndMerge(Some(MergeMethod::Squash)),
+        Action::EnableAutoMerge(None),
+    ];
+    let strict = rule("strict");
+    let mut lenient = rule("lenient");
+    lenient.allow_unknown = true;
+    let unknown = bump("a/b", 1, UpdateKind::Unknown);
+    let no_bump = item("a/b", 1, "docs: update OpenWiki");
+    let major = bump("a/b", 1, UpdateKind::Major);
+    let mut no_checks = no_bump.clone();
+    no_checks.checks.clear();
+    let mut draft = no_bump.clone();
+    draft.draft = true;
+    let mut pending = no_bump.clone();
+    pending.checks.push(check(CheckState::Pending));
+    for action in &merging {
+        for allowed in [&unknown, &no_bump] {
+            assert!(auto_allowed(&lenient, allowed, action));
+            assert!(!auto_allowed(&strict, allowed, action));
+        }
+        assert!(!auto_allowed(&lenient, &major, action));
+        for refused in [&no_checks, &draft, &pending] {
+            assert!(!auto_allowed(&lenient, refused, action));
+        }
+    }
+}
+
 const EXAMPLE_FILES: [(&str, &str); 7] = [
     (
         "approve-green-bot-prs",

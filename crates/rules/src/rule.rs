@@ -132,6 +132,10 @@ pub struct Rule {
     /// `false`: suggestions only; `true`: runs on every refresh.
     #[serde(default)]
     pub auto: bool,
+    /// Opt-in for `auto` rules: merging actions also run for updates without a recognized
+    /// version bump (`unknown`, e.g. a docs-sync PR). Major updates stay refused.
+    #[serde(default)]
+    pub allow_unknown: bool,
 }
 
 /// The whole `rules.toml`: a list of `[[rule]]` tables.

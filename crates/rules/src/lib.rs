@@ -147,7 +147,8 @@ fn checks_match(rule: &Rule, item: &PrItem) -> bool {
 /// Safety gate for `auto = true` rules. Items that are only in the inbox through the repository
 /// scope are refused unless the rule says `involved = false`. Merging actions (`Merge`,
 /// `ApproveAndMerge`, `EnableAutoMerge`) are refused for drafts and unless the bump kind is
-/// `Patch` or `Minor` and CI is strictly green (no checks is not enough). `Rebase` is refused
+/// `Patch` or `Minor` (also `Unknown` when the rule says `allow_unknown`, never `Major`) and CI
+/// is strictly green (no checks is not enough). `Rebase` is refused
 /// for drafts (it never merges). Merged and closed PRs only allow `MarkRead`, `MarkDone` and
 /// `Unsubscribe`. Every other action is allowed.
 pub fn auto_allowed(rule: &Rule, item: &PrItem, action: &Action) -> bool {
@@ -160,9 +161,12 @@ pub fn auto_allowed(rule: &Rule, item: &PrItem, action: &Action) -> bool {
     match action {
         Action::Rebase => !item.is_draft(),
         Action::Merge(_) | Action::ApproveAndMerge(_) | Action::EnableAutoMerge(_) => {
-            !item.is_draft()
-                && matches!(bump_kind(item), UpdateKind::Patch | UpdateKind::Minor)
-                && item.ci() == CiSummary::Green
+            let kind_allowed = match bump_kind(item) {
+                UpdateKind::Patch | UpdateKind::Minor => true,
+                UpdateKind::Unknown => rule.allow_unknown,
+                UpdateKind::Major => false,
+            };
+            !item.is_draft() && kind_allowed && item.ci() == CiSummary::Green
         }
         _ => true,
     }
@@ -229,6 +233,9 @@ const DEFAULT_RULES: &str = r#"# Prism automation rules. Every [[rule]] needs a 
 #            (never merges major/unknown updates or PRs without green checks, and only acts
 #            on PRs that involve you unless the rule says involved = false; merged and closed
 #            PRs only ever get mark-read, mark-done and unsubscribe)
+#   allow_unknown  true = an auto rule may also merge updates that are no recognized version
+#            bump (update = unknown, e.g. "docs: update OpenWiki"); major is still refused
+#            (default: false)
 
 # No rules are active by default. Copy examples from
 # https://github.com/dfuchss/prism/tree/main/examples/rules, for instance:
